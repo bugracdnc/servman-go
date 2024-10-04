@@ -28,13 +28,14 @@ type Flags struct {
 func handleFlags() *Flags {
 	flags := Flags{}
 
-	flags.search = flag.String("search", "", "Search flag")
+	flags.search = flag.String("s", "", "Search flag (shorthand)")
+	flag.StringVar(flags.search, "search", "", "Search flag")
 
-	flags.active = flag.Bool("active", false, "Active flag")
+	flags.active = flag.Bool("a", false, "Active flag")
 
-	flags.disabled = flag.Bool("disabled", false, "Disabled flag")
+	flags.disabled = flag.Bool("d", false, "Disabled flag")
 
-	flags.enable = flag.String("enable", "", "Enable flag")
+	flag.StringVar(flags.search, "enable", "", "Search flag")
 
 	flags.disable = flag.String("disable", "", "Enable flag")
 
