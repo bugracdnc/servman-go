@@ -18,18 +18,18 @@ func printService(index int, color *color.Color, name string) int {
 	return n
 }
 
-func printServices(services *[]Service, activeFlag *bool, disabledFlag *bool, downFlag *bool) {
+func printServices(services *[]Service, activeFlag *bool, disabledFlag *bool) {
 	index := 0
 	for _, service := range *services {
-		if service.Active && *activeFlag {
-			index++
-			printService(index, green, service.Name)
-		} else if !service.StartOnBoot && *downFlag {
-			index++
-			printService(index, blue, service.Name)
-		} else if !service.Active && *disabledFlag {
+		if !service.Active && *disabledFlag {
 			index++
 			printService(index, red, service.Name)
+		} else if !service.StartOnBoot {
+			index++
+			printService(index, blue, service.Name)
+		} else if service.Active && *activeFlag {
+			index++
+			printService(index, green, service.Name)
 		}
 	}
 }
