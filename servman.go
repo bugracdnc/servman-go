@@ -9,10 +9,10 @@ import (
 )
 
 type Flags struct {
-	//List services main command
-	list *string
+	//Search services
+	search *string
 
-	//Delimiters for list
+	//Delimiters to list
 	active   *bool
 	disabled *bool
 
@@ -20,7 +20,7 @@ type Flags struct {
 	enable  *string
 	disable *string
 
-	//up and down a service
+	//up and down a service by name
 	up   *string
 	down *string
 }
@@ -28,7 +28,7 @@ type Flags struct {
 func handleFlags() *Flags {
 	flags := Flags{}
 
-	flags.list = flag.String("list", "", "List flag")
+	flags.search = flag.String("search", "", "Search flag")
 
 	flags.active = flag.Bool("active", false, "Active flag")
 
@@ -61,8 +61,8 @@ func main() {
 		enable(services, flags.enable)
 	} else if len(*flags.disable) > 0 {
 		disable(services, flags.disable)
-	} else if len(*flags.list) > 0 {
-		listByName(services, flags.list, flags.active, flags.disabled)
+	} else if len(*flags.search) > 0 {
+		search(services, flags.search, flags.active, flags.disabled)
 	} else if len(*flags.up) > 0 {
 		up(services, flags.up)
 	} else if len(*flags.down) > 0 {
@@ -72,8 +72,8 @@ func main() {
 	}
 }
 
-func listByName(services *[]Service, name *string, activeFlag *bool, disabledFlag *bool) {
-	fmt.Printf("Listing services: '%s'\n", *name)
+func search(services *[]Service, name *string, activeFlag *bool, disabledFlag *bool) {
+	fmt.Printf("Searching services: '%s'\n", *name)
 	var foundServices []Service
 	for _, service := range *services {
 		if strings.Contains(service.Name, *name) {
