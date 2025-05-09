@@ -1,4 +1,4 @@
-package main
+package sv
 
 import (
 	"log"
@@ -29,7 +29,7 @@ func getServices(location string) (*[]Service, error) {
 	return &services, nil
 }
 
-func fetchServices(location string) *[]Service {
+func FetchServices(location string) *[]Service {
 
 	services, err := getServices(location)
 	if err != nil {

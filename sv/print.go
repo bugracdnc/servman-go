@@ -1,4 +1,4 @@
-package main
+package sv
 
 import (
 	"fmt"
@@ -19,7 +19,7 @@ func printService(index int, color *color.Color, name string) int {
 	return n
 }
 
-func printServices(services *[]Service, activeFlag *bool, disabledFlag *bool) {
+func PrintServices(services *[]Service, activeFlag *bool, disabledFlag *bool) {
 	index := 0
 	for _, service := range *services {
 		if !service.Active && *disabledFlag {
