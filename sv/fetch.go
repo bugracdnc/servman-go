@@ -1,41 +1,47 @@
 package sv
 
 import (
-	"log"
+	"fmt"
 	"os"
+	"path/filepath"
+	"strings"
 )
 
-func getServices(location string) (*[]Service, error) {
-	var services []Service
-	activeServDir := "/var/service"
-
+func getServices(location, activeDir string) ([]Service, error) {
 	dirs, err := os.ReadDir(location)
 	if err != nil {
 		return nil, err
 	}
 
+	var services []Service
 	for _, dir := range dirs {
-		startOnBoot := true
-		if _, err := os.ReadFile(location + "/" + dir.Name() + "/" + "down"); err == nil {
-			startOnBoot = false
-		}
-		isActive := false
-		if _, err := os.ReadDir(activeServDir + "/" + dir.Name()); err == nil {
-			isActive = true
-		}
-		services = append(services, Service{Name: dir.Name(), Active: isActive, Location: location, StartOnBoot: startOnBoot})
-
+		_, downErr := os.Stat(filepath.Join(location, dir.Name(), "down"))
+		_, activeErr := os.Stat(filepath.Join(activeDir, dir.Name()))
+		services = append(services, Service{
+			Name:        dir.Name(),
+			Active:      activeErr == nil,
+			Location:    location,
+			StartOnBoot: downErr != nil,
+		})
 	}
-	return &services, nil
+	return services, nil
 }
 
-func FetchServices(location string) *[]Service {
-
-	services, err := getServices(location)
+// FetchServices lists the services installed in location.
+func FetchServices(location string) ([]Service, error) {
+	services, err := getServices(location, ActiveDir)
 	if err != nil {
-		log.Fatal(err)
+		return nil, fmt.Errorf("reading runit services (is this a runit system?): %w", err)
 	}
+	return services, nil
+}
 
-	return services
-
+// Find returns the service whose name matches case-insensitively.
+func Find(services []Service, name string) (Service, error) {
+	for _, s := range services {
+		if strings.EqualFold(s.Name, name) {
+			return s, nil
+		}
+	}
+	return Service{}, fmt.Errorf("no service named %q in %s", name, DefaultLocation)
 }

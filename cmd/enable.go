@@ -2,9 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"os/exec"
-	"strings"
+	"path/filepath"
+	"servman/sv"
 
 	"github.com/spf13/cobra"
 )
@@ -20,18 +19,13 @@ var enableCmd = &cobra.Command{
 }
 
 func enable(name *string) {
-	fmt.Printf("Enabling: '%s'\n", *name)
-	for _, service := range *services {
-		if strings.EqualFold(service.Name, *name) {
-			cmd := exec.Command("sudo", "ln", "-s", "/etc/sv/"+service.Name, "/var/service")
-			stdout, err := cmd.Output()
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			fmt.Printf("%s enabled. %s\n", service.Name, stdout)
-		}
+	service := mustFind(*name)
+	if service.Active {
+		fmt.Printf("%s is already enabled.\n", service.Name)
+		return
 	}
+	sudo("ln", "-s", filepath.Join(service.Location, service.Name), sv.ActiveDir)
+	fmt.Printf("%s enabled.\n", service.Name)
 }
 
 func init() {

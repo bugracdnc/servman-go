@@ -2,9 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"os/exec"
-	"strings"
+	"path/filepath"
 
 	"github.com/spf13/cobra"
 )
@@ -19,18 +17,9 @@ var downCmd = &cobra.Command{
 }
 
 func down(name *string) {
-	fmt.Printf("Turning down: '%s'\n", *name)
-	for _, service := range *services {
-		if strings.EqualFold(service.Name, *name) {
-			cmd := exec.Command("sudo", "touch", "/var/service/"+service.Name+"/down")
-			stdout, err := cmd.Output()
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			fmt.Printf("%s is down on boot. %s\n", service.Name, stdout)
-		}
-	}
+	service := mustFind(*name)
+	sudo("touch", filepath.Join(service.Location, service.Name, "down"))
+	fmt.Printf("%s is down on boot.\n", service.Name)
 }
 
 func init() {

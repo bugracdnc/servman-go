@@ -19,9 +19,9 @@ func printService(index int, color *color.Color, name string) int {
 	return n
 }
 
-func PrintServices(services *[]Service, activeFlag *bool, disabledFlag *bool) {
+func PrintServices(services []Service, activeFlag *bool, disabledFlag *bool) {
 	index := 0
-	for _, service := range *services {
+	for _, service := range services {
 		if !service.Active && *disabledFlag {
 			index++
 			printService(index, red, service.Name)

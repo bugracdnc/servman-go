@@ -2,9 +2,8 @@ package cmd
 
 import (
 	"fmt"
-	"log"
-	"os/exec"
-	"strings"
+	"path/filepath"
+	"servman/sv"
 
 	"github.com/spf13/cobra"
 )
@@ -20,18 +19,14 @@ var disableCmd = &cobra.Command{
 }
 
 func disable(name *string) {
-	fmt.Printf("Disabling: '%s'\n", *name)
-	for _, service := range *services {
-		if strings.EqualFold(service.Name, *name) {
-			cmd := exec.Command("sudo", "rm", "-rf", "/var/service/"+service.Name)
-			stdout, err := cmd.Output()
-			if err != nil {
-				log.Fatal(err)
-			}
-
-			fmt.Printf("%s disabled. %s\n", service.Name, stdout)
-		}
+	service := mustFind(*name)
+	if !service.Active {
+		fmt.Printf("%s is already disabled.\n", service.Name)
+		return
 	}
+	// The entry in ActiveDir is a symlink, so plain rm (no -r) removes only the link.
+	sudo("rm", filepath.Join(sv.ActiveDir, service.Name))
+	fmt.Printf("%s disabled.\n", service.Name)
 }
 
 func init() {
