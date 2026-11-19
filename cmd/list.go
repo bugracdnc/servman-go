@@ -31,7 +31,7 @@ func list(enabledFlag *bool, disabledFlag *bool) {
 		fmt.Print("disabled")
 	}
 	fmt.Println()
-	sv.PrintServices(services, enabledFlag, disabledFlag)
+	sv.PrintServices(services(), enabledFlag, disabledFlag)
 }
 
 func init() {

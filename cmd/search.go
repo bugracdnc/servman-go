@@ -23,12 +23,12 @@ var searchCmd = &cobra.Command{
 func search(name *string, enabledFlag *bool, disabledFlag *bool) {
 	fmt.Printf("Searching services: '%s'\n", *name)
 	var foundServices []sv.Service
-	for _, service := range *services {
-		if strings.Contains(service.Name, *name) {
+	for _, service := range services() {
+		if strings.Contains(strings.ToLower(service.Name), strings.ToLower(*name)) {
 			foundServices = append(foundServices, service)
 		}
 	}
-	sv.PrintServices(&foundServices, enabledFlag, disabledFlag)
+	sv.PrintServices(foundServices, enabledFlag, disabledFlag)
 }
 
 func init() {
